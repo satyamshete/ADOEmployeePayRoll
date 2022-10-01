@@ -167,5 +167,34 @@ namespace ADOEmployeePayRoll
                 sqlConnect.Close();
             }
         }
+        public void DeleteEmployeeRecord()
+        {
+            SqlConnection sqlConnect = new SqlConnection(connectionString);
+            try
+            {
+                using (sqlConnect)
+                {
+                    sqlConnect.Open();
+                    SqlCommand cmd = new SqlCommand("DeleteEmployeeDetails", sqlConnect);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    Console.Write("Enter employee full name to delete record");
+                    emp.EmpName = Console.ReadLine();
+                    cmd.Parameters.AddWithValue("@FullName", emp.EmpName);
+                    int affRows = cmd.ExecuteNonQuery();
+
+                    if (affRows >= 1)
+                    { Console.WriteLine("Employee details Removed successfully."); }
+                    else
+                    { Console.WriteLine("Employee not Removed.."); }
+                }
+            }
+            catch (Exception ex)
+            { Console.WriteLine(ex.Message); }
+            finally
+            {
+                sqlConnect.Close();
+            }
+        }
     }
 }
