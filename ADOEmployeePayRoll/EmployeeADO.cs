@@ -121,5 +121,51 @@ namespace ADOEmployeePayRoll
                 sqlConnect.Close();
             }
         }
+        public void UpdateBasicPay()
+        {
+            Console.Write("Enter Employee Name to update: ");
+            string empName = Console.ReadLine();
+            Console.Write("Enter Employee basic salary to update: ");
+            float basic = float.Parse(Console.ReadLine());
+            Console.Write("Enter Employee deductions to update: ");
+            float deductions = float.Parse(Console.ReadLine());
+            Console.Write("Enter Employee incometax  to update: ");
+            float incometax = float.Parse(Console.ReadLine());
+
+            SqlConnection sqlConnect = new SqlConnection(connectionString);
+            try
+            {
+                using (sqlConnect)
+                {
+                    sqlConnect.Open();
+                    SqlCommand cmd = new SqlCommand("updateEmployee", sqlConnect);
+
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    emp.EmpName = empName;
+                    emp.BasicPay = basic;
+                    emp.Deductions = deductions;
+                    emp.IncomeTax = incometax;
+                    cmd.Parameters.AddWithValue("@EmpName", emp.EmpName);
+                    cmd.Parameters.AddWithValue("@BasicPay", emp.BasicPay);
+                    cmd.Parameters.AddWithValue("@deductions", emp.Deductions);
+                    cmd.Parameters.AddWithValue("@incometax", emp.IncomeTax);
+
+
+                    int affRows = cmd.ExecuteNonQuery();
+
+                    if (affRows >= 1)
+                    { Console.WriteLine(" Employee pay  details Updated.."); }
+                    else
+                    { Console.WriteLine(" Employee pay not Updated..."); }
+                }
+            }
+            catch (Exception ex)
+            { Console.WriteLine(ex.Message); }
+
+            finally
+            {
+                sqlConnect.Close();
+            }
+        }
     }
 }
