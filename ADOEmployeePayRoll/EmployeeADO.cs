@@ -63,5 +63,63 @@ namespace ADOEmployeePayRoll
                 sqlConnect.Close();
             }
         }
+        public void AddEmpDetails()
+        {
+            SqlConnection sqlConnect = new SqlConnection(connectionString);
+            try
+            {
+                using (sqlConnect)
+                {
+                    sqlConnect.Open();
+                    SqlCommand cmd = new SqlCommand("AddEmployeeDetails", sqlConnect);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    Console.WriteLine("Enter Company Name"); emp.CompanyName = Console.ReadLine();
+                    Console.Write("Enter EmpName : "); emp.EmpName = Console.ReadLine();
+                    Console.Write("Enter Gender : "); emp.Gender = Console.ReadLine();
+                    Console.Write("Enter Phone : "); emp.PhoneNumber = Int64.Parse(Console.ReadLine());
+                    Console.Write("Enter EmpAddress : "); emp.EmpAddress = Console.ReadLine();
+                    Console.Write("Enter Department : "); emp.Department = Console.ReadLine();
+                    Console.Write("Enter StartDate yyyy-mm-dd : "); emp.StartDate = DateTime.Parse(Console.ReadLine());
+                    Console.Write("Enter BasicPay : "); emp.BasicPay = int.Parse(Console.ReadLine());
+                    Console.Write("Enter Deductions : "); emp.Deductions = int.Parse(Console.ReadLine());
+                    Console.Write("Enter IncomeTax : "); emp.IncomeTax = int.Parse(Console.ReadLine());
+                    emp.TaxablePay = emp.BasicPay - emp.Deductions;
+                    emp.NetPay = emp.TaxablePay - emp.IncomeTax;
+
+                    cmd.Parameters.AddWithValue("@company", emp.CompanyName);
+                    cmd.Parameters.AddWithValue("@FullName", emp.EmpName);
+                    cmd.Parameters.AddWithValue("@gender", emp.Gender);
+                    cmd.Parameters.AddWithValue("@PhoneNumber", emp.PhoneNumber);
+                    cmd.Parameters.AddWithValue("@Address", emp.EmpAddress);
+                    cmd.Parameters.AddWithValue("@Date", emp.StartDate);
+                    cmd.Parameters.AddWithValue("@Department", emp.Department);
+                    cmd.Parameters.AddWithValue("@basicPay", emp.BasicPay);
+                    cmd.Parameters.AddWithValue("@Taxablepay", emp.TaxablePay);
+                    cmd.Parameters.AddWithValue("@deductions", emp.Deductions);
+                    cmd.Parameters.AddWithValue("@IncomeTax", emp.IncomeTax);
+                    cmd.Parameters.AddWithValue("@netPay", emp.NetPay);
+
+                    int affRows = cmd.ExecuteNonQuery();
+                    if (affRows >= 1)
+                    {
+                        Console.WriteLine("Employee added successfully.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Employee not added..");
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                sqlConnect.Close();
+            }
+        }
     }
 }

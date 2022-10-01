@@ -10,7 +10,7 @@
 
             void OptionsDisplay()
             {
-                Console.Write("\nSelect option :\n1.Get Payroll Table Details\n");
+                Console.Write("\nSelect option :\n1.Get Payroll Table Details\n2.Add Emloyee Details\n");
                 //Retrieve all employee payroll table details
                 int option = int.Parse(Console.ReadLine());
                 Console.WriteLine();
@@ -18,6 +18,10 @@
                 {
                     case 1:
                         emp.GetEmployeeDetails();
+                        OptionsDisplay();
+                        break;
+                    case 2:
+                        emp.AddEmpDetails();
                         OptionsDisplay();
                         break;
                     default:
