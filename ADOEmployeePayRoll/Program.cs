@@ -10,7 +10,7 @@
 
             void OptionsDisplay()
             {
-                Console.Write("\nSelect option :\n1.Get Payroll Table Details\n2.Add Emloyee Details\n3.Update Pay details\n4. Delete Employee details\n");
+                Console.Write("\nSelect option :\n1.Get Payroll Table Details\n2.Add Emloyee Details\n3.Update Pay details\n4. Delete Employee details\n5. Get Employee details by Date Range\n");
                 //Retrieve all employee payroll table details
                 int option = int.Parse(Console.ReadLine());
                 Console.WriteLine();
@@ -32,6 +32,10 @@
                         emp.DeleteEmployeeRecord();
                         OptionsDisplay();
                         break;
+                    case 5:
+                        emp.GetRowsByDateRange();
+                        OptionsDisplay();
+                        break ;
                     default:
                         Console.WriteLine("Enter correct option");
                         break;

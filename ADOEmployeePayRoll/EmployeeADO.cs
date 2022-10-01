@@ -196,5 +196,58 @@ namespace ADOEmployeePayRoll
                 sqlConnect.Close();
             }
         }
+        public void GetRowsByDateRange()
+        {
+            SqlConnection sqlConnect = new SqlConnection(connectionString);
+            try
+            {
+                using (sqlConnect)
+                {
+                    sqlConnect.Open();
+                    SqlCommand cmd = new SqlCommand("GetEmployeeInDateRange", sqlConnect);
+
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    Console.WriteLine("\nEnter date range yyyy-mm-dd:");
+                    Console.Write("Minimum date: "); DateTime date1 = DateTime.Parse(Console.ReadLine());
+                    Console.Write("Maximum date: "); DateTime date2 = DateTime.Parse(Console.ReadLine());
+
+                    cmd.Parameters.AddWithValue("@fromDate", date1);
+                    cmd.Parameters.AddWithValue("@toDate", date2);
+
+                    SqlDataReader dr = cmd.ExecuteReader();
+                    if (dr.HasRows)
+                    {
+                        while (dr.Read())
+                        {
+                            emp.CompID = dr.GetInt32(0);
+                            emp.CompanyName = dr.GetString(1);
+                            emp.EmpId = dr.GetInt32(2);
+                            emp.EmpName = dr.GetString(3);
+                            emp.BasicPay = dr.GetDouble(4);
+                            emp.Deductions = dr.GetDouble(5);
+                            emp.TaxablePay = dr.GetDouble(6);
+                            emp.IncomeTax = dr.GetDouble(7);
+                            emp.NetPay = dr.GetDouble(8);
+
+                            Console.Write(" {0}  {1}   {2}   {3}   {4}    {5}   {6}   {7}   {8}\n", emp.CompID, emp.CompanyName, emp.EmpId, emp.EmpName, emp.BasicPay, emp.Deductions, emp.TaxablePay, emp.IncomeTax, emp.NetPay);
+                        }
+                    }
+                    dr.Close();
+
+                    int affRows = cmd.ExecuteNonQuery();
+
+                    if (affRows >= 1)
+                    { Console.WriteLine(" Query Executed successfully."); }
+
+                }
+            }
+            catch (Exception ex)
+            { Console.WriteLine(ex.Message); }
+            finally
+            {
+                sqlConnect.Close();
+            }
+        }
     }
 }
