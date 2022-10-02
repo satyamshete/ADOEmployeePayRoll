@@ -249,5 +249,80 @@ namespace ADOEmployeePayRoll
                 sqlConnect.Close();
             }
         }
-    }
+
+        public void AddMultipleEmployees(List<Employee> employees)
+        {
+            DateTime start = DateTime.Now;
+
+            foreach (Employee employee in employees)
+                MultipleEmployees(employee);
+
+            DateTime end = DateTime.Now;
+            Console.WriteLine("With single main thread: " + (end - start).TotalMilliseconds);
+        }
+
+
+        public void AddMultipleEmployeesUsingThreads(List<Employee> employees)
+        {
+            DateTime start = DateTime.Now;
+
+            foreach (Employee employee in employees)
+            {
+                Task thread = new Task(() => MultipleEmployees(employee));
+                thread.Start();
+            }
+            DateTime end = DateTime.Now;
+            Console.WriteLine("With multi threading: " + (end - start).TotalMilliseconds);
+        }
+
+        public void MultipleEmployees(Employee emp)
+        {
+            SqlConnection sqlConnect = new SqlConnection(connectionString);
+            try
+            {
+                using (sqlConnect)
+                {
+                    sqlConnect.Open();
+                    SqlCommand cmd = new SqlCommand("AddEmployeeDetails", sqlConnect);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    emp.TaxablePay = emp.BasicPay - emp.Deductions;
+                    emp.NetPay = emp.TaxablePay - emp.IncomeTax;
+
+                    cmd.Parameters.AddWithValue("@company", emp.CompanyName);
+                    cmd.Parameters.AddWithValue("@FullName", emp.EmpName);
+                    cmd.Parameters.AddWithValue("@gender", emp.Gender);
+                    cmd.Parameters.AddWithValue("@PhoneNumber", emp.PhoneNumber);
+                    cmd.Parameters.AddWithValue("@Address", emp.EmpAddress);
+                    cmd.Parameters.AddWithValue("@Date", emp.StartDate);
+                    cmd.Parameters.AddWithValue("@Department", emp.Department);
+                    cmd.Parameters.AddWithValue("@basicPay", emp.BasicPay);
+                    cmd.Parameters.AddWithValue("@Taxablepay", emp.TaxablePay);
+                    cmd.Parameters.AddWithValue("@deductions", emp.Deductions);
+                    cmd.Parameters.AddWithValue("@IncomeTax", emp.IncomeTax);
+                    cmd.Parameters.AddWithValue("@netPay", emp.NetPay);
+
+                    int affRows = cmd.ExecuteNonQuery();
+                    if (affRows >= 1)
+                    {
+                        Console.WriteLine("Employee added successfully.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Employee not added..");
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+            finally
+            {
+                sqlConnect.Close();
+            }
+
+        }
+        }
 }
